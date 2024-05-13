@@ -1,6 +1,6 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 jobs:
   java-build:
     steps:
