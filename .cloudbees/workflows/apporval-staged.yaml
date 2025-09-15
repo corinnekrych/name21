@@ -1,0 +1,36 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: apporval-staged
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        type: string
+        required: true
+        description: This is a system-generated parameter and is required for use in
+          application releases. Refer to
+          https://docs.cloudbees.com/docs/cloudbees-platform/latest/applications/releases#manifest
+          for the expected format
+metadata:
+  stages/v1alpha1:
+    - name: PREPROD
+      jobs:
+        - deploy-to-PREPROD
+    - name: Production
+      jobs:
+        - deploy-to-Production
+jobs:
+  deploy-to-PREPROD:
+    steps:
+      - name: Deploy to PREPROD
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: echo "Deploying to PREPROD"
+  deploy-to-Production:
+    needs:
+      - deploy-to-PREPROD
+    steps:
+      - name: Deploy to Production
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: echo "Deploying to Production"
