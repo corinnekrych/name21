@@ -2,15 +2,7 @@ apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
 name: apporval-staged
 on:
-  workflow_dispatch:
-    inputs:
-      manifest:
-        type: string
-        required: true
-        description: This is a system-generated parameter and is required for use in
-          application releases. Refer to
-          https://docs.cloudbees.com/docs/cloudbees-platform/latest/applications/releases#manifest
-          for the expected format
+  workflow_dispatch: null
 metadata:
   stages/v1alpha1:
     - name: PREPROD
@@ -21,11 +13,13 @@ metadata:
         - deploy-to-Production
 jobs:
   deploy-to-PREPROD:
-    steps:
-      - name: Deploy to PREPROD
-        uses: docker://golang:1.20.3-alpine3.17
-        shell: sh
-        run: echo "Deploying to PREPROD"
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+    with:
+      instructions: Deployments to production require an SRE approval.
+      disallowLaunchByUser: false
+      approvers: 310969a0-e7fb-11ea-a794-42010a83ae1a,SRE
+      notifyAllEligibleUsers: false
   deploy-to-Production:
     needs:
       - deploy-to-PREPROD
