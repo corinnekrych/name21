@@ -19,8 +19,8 @@ jobs:
     with:
       instructions: Deployments to production require an SRE approval.
       disallowLaunchByUser: false
-      approvers: 5f2ef83c-03d4-11eb-9d67-42010a83ae35
       notifyAllEligibleUsers: false
+      approvers: 015d04e8-5bcb-11eb-93be-42010a83aee8,0cb88e48-03d3-11eb-9d67-42010a83ae35
   deploy-to-Production:
     needs: second-manual-approval
     steps:
