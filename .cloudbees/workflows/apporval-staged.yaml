@@ -8,6 +8,7 @@ metadata:
     - name: PREPROD
       jobs:
         - deploy-to-PREPROD
+        - second-manual-approval
     - name: Production
       jobs:
         - deploy-to-Production
@@ -21,10 +22,17 @@ jobs:
       approvers: 5f2ef83c-03d4-11eb-9d67-42010a83ae35
       notifyAllEligibleUsers: false
   deploy-to-Production:
-    needs:
-      - deploy-to-PREPROD
+    needs: second-manual-approval
     steps:
       - name: Deploy to Production
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: echo "Deploying to Production"
+  second-manual-approval:
+    needs:
+      - deploy-to-PREPROD
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+    with:
+      disallowLaunchByUser: false
+      notifyAllEligibleUsers: false
